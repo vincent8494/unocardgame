@@ -1,0 +1,191 @@
+/* Credit text styling */
+.credit-text {
+  position: absolute;
+  top: 20px;
+  left: 20px;
+  color: rgba(255, 255, 255, 0.8);
+  font-size: 0.9rem;
+  font-weight: 500;
+  z-index: 10;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
+}
+
+.pulse {
+  color: white;
+  font-weight: 600;
+  animation: pulse 2s infinite;
+  display: inline-block;
+  padding: 0 5px;
+}
+
+@keyframes pulse {
+  0% {
+    opacity: 0.7;
+    transform: scale(1);
+    text-shadow: 0 0 0 rgba(255, 255, 255, 0.7);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.05);
+    text-shadow: 0 0 10px rgba(255, 255, 255, 0.9);
+  }
+  100% {
+    opacity: 0.7;
+    transform: scale(1);
+    text-shadow: 0 0 0 rgba(255, 255, 255, 0.7);
+  }
+}
+
+.splash-screen {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(135deg, #ff5e62, #ff9966);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+  transition: all 0.5s ease-in-out;
+  opacity: 1;
+  transform: scale(1);
+  overflow: hidden;
+}
+
+.splash-screen.hovered {
+  background: linear-gradient(135deg, #ff416c, #ff4b2b);
+  transform: scale(1.05);
+  box-shadow: 0 0 50px rgba(0, 0, 0, 0.3);
+}
+
+.splash-content {
+  text-align: center;
+  color: white;
+  padding: 2rem;
+  max-width: 80%;
+  animation: fadeIn 1s ease-out;
+  position: relative;
+  z-index: 2;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.splash-content h1 {
+  font-size: 4rem;
+  margin-bottom: 1rem;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+  letter-spacing: 2px;
+  font-weight: 800;
+  text-transform: uppercase;
+}
+
+.splash-content p {
+  font-size: 1.5rem;
+  margin-bottom: 2rem;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
+}
+
+.countdown {
+  font-size: 1.2rem;
+  margin: 1.5rem 0;
+  font-weight: 500;
+  min-height: 1.5rem;
+}
+
+.skip-button {
+  background: rgba(255, 255, 255, 0.2);
+  border: 2px solid white;
+  color: white;
+  padding: 0.8rem 2rem;
+  font-size: 1rem;
+  border-radius: 50px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  margin-top: 1rem;
+  outline: none;
+  font-weight: 600;
+  letter-spacing: 1px;
+}
+
+.skip-button:hover {
+  background: white;
+  color: #ff5e62;
+  transform: translateY(-2px);
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+}
+
+/* Add some decorative elements */
+.splash-screen::before {
+  content: '';
+  position: absolute;
+  width: 200%;
+  height: 200%;
+  background: var(--card-background) center/contain repeat;
+  opacity: 0.1;
+  animation: rotate 60s linear infinite;
+  z-index: 1;
+  pointer-events: none;
+}
+
+@keyframes rotate {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .splash-content h1 {
+    font-size: 2.5rem;
+  }
+  
+  .splash-content p {
+    font-size: 1.2rem;
+  }
+  
+  .countdown {
+    font-size: 1rem;
+  }
+}
+
+/* Ensure the splash screen is above all other content */
+.splash-screen {
+  z-index: 1000;
+  transition: all 0.3s ease-in-out;
+}
+
+/* Make sure the content is clickable */
+.splash-screen * {
+  pointer-events: auto;
+}
+
+/* Ensure the button has proper cursor and styling */
+.skip-button {
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+/* Improve accessibility */
+.splash-screen:focus {
+  outline: 2px solid white;
+  outline-offset: 4px;
+}
+
+/* Add a subtle animation to the content */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.splash-content {
+  animation: fadeInUp 0.5s ease-out forwards;
+}

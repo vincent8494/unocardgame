@@ -1,0 +1,177 @@
+.game-rules {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.8);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 2000;
+  padding: 20px;
+  overflow-y: auto;
+  backdrop-filter: blur(5px);
+  animation: fadeIn 0.3s ease-out;
+}
+
+.rules-content {
+  background: linear-gradient(135deg, #ff5e62, #ff9966);
+  color: white;
+  padding: 2rem;
+  border-radius: 15px;
+  max-width: 800px;
+  max-height: 90vh;
+  position: relative;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+  overflow: hidden;
+  animation: slideUp 0.4s ease-out;
+}
+
+.rules-content h2 {
+  text-align: center;
+  margin-bottom: 1.5rem;
+  font-size: 2.5rem;
+  color: white;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.rules-content h3 {
+  color: white;
+  margin: 1.5rem 0 1rem;
+  font-size: 1.5rem;
+  border-bottom: 2px solid rgba(255, 255, 255, 0.3);
+  padding-bottom: 0.5rem;
+}
+
+.rules-content h4 {
+  color: white;
+  margin: 1rem 0 0.5rem;
+  font-size: 1.2rem;
+}
+
+.rules-content p, .rules-content li {
+  line-height: 1.6;
+  margin-bottom: 0.8rem;
+  font-size: 1.1rem;
+}
+
+.rules-content ul, .rules-content ol {
+  padding-left: 1.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.rules-content li {
+  margin-bottom: 0.5rem;
+}
+
+.rules-scrollable {
+  max-height: 60vh;
+  overflow-y: auto;
+  padding-right: 1rem;
+  margin-bottom: 1.5rem;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255, 255, 255, 0.5) transparent;
+}
+
+.rules-scrollable::-webkit-scrollbar {
+  width: 8px;
+}
+
+.rules-scrollable::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 10px;
+}
+
+.rules-scrollable::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.5);
+  border-radius: 10px;
+}
+
+.special-cards {
+  margin: 2rem 0;
+}
+
+.card-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 1.5rem;
+  margin: 1.5rem 0;
+}
+
+.card-rule {
+  background: rgba(255, 255, 255, 0.1);
+  padding: 1.2rem;
+  border-radius: 10px;
+  backdrop-filter: blur(5px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.card-rule:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+}
+
+.continue-button {
+  display: block;
+  width: 100%;
+  padding: 1rem;
+  background: rgba(255, 255, 255, 0.2);
+  border: 2px solid white;
+  color: white;
+  font-size: 1.2rem;
+  border-radius: 50px;
+  cursor: pointer;
+  margin-top: 1.5rem;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  text-align: center;
+}
+
+.continue-button:hover {
+  background: white;
+  color: #ff5e62;
+  transform: translateY(-2px);
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .rules-content {
+    padding: 1.5rem;
+    max-width: 95%;
+  }
+  
+  .card-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .rules-content h2 {
+    font-size: 2rem;
+  }
+  
+  .rules-content h3 {
+    font-size: 1.3rem;
+  }
+  
+  .rules-content p, .rules-content li {
+    font-size: 1rem;
+  }
+}

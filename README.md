@@ -34,7 +34,7 @@ NODE_ENV=production npm start   # serves the built client from :5000
 ## Tests
 
 ```bash
-npm run test:engine
+npm test
 ```
 
 Covers the rule engine and the bots: 300 randomised games across 2–4 players
@@ -77,6 +77,31 @@ since it broadcast the whole state to everyone.
   can catch you for a 2-card penalty
 - Rounds score to 500 — number cards face value, actions 20, wilds 50
 - Draw pile reshuffles from the discards when it runs out
+
+## Fairness
+
+Bots get no information a human doesn't: they see card counts, never hands.
+Three things were deliberately balanced, and `npm run test:fairness` asserts
+they stay that way.
+
+**The lead rotates.** Whoever starts is worth 1–2 points of win rate, so the
+starting seat moves round by round instead of always sitting with whoever
+created the room.
+
+**Bots forget to call UNO.** They used to call it every single time while a
+human had to remember a button. Measured over 4000 matches, that cost a human
+who forgets 30% of the time about 8 points of win rate heads-up, and a human
+who never remembers won 13% instead of 50% — 0% in a four-player game. Bots now
+forget at a human-ish 20%, so there is something to catch them on.
+
+**Bots hesitate before catching.** They used to catch a missed UNO in the same
+tick as the play, so a human never had a chance to react. There is now a 2.5s
+window in which you can call UNO late to save yourself, or catch a bot that
+forgot, before the bots act.
+
+With those in place, a player using the same strategy and the same alertness as
+a bot wins its fair share: ~50% heads-up and ~25% in a four-player game. What
+is left is attention and card play — which is the point.
 
 ---
 

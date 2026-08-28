@@ -46,7 +46,8 @@ export default function Rules({ onClose }) {
 
           <section>
             <h3>Calling UNO</h3>
-            <p>Press <strong>UNO!</strong> as you go down to one card. Forget, and any opponent can catch you before your next turn — you draw 2. Bots will catch you too.</p>
+            <p>Press <strong>UNO!</strong> as you go down to one card. Forget, and any opponent can catch you — you draw 2. You get a couple of seconds to call it late and save yourself.</p>
+            <p>Bots forget too, at about the same rate you will. When one does, a <strong>Catch</strong> button appears on their seat — take it before another bot does.</p>
           </section>
 
           <section>

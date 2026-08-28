@@ -11,6 +11,10 @@ const bot = require('./game/bot')
 
 const PORT = process.env.PORT || 5000
 const BOT_THINK_MS = 900
+// Bots used to catch a missed UNO in the same tick as the play, leaving a human
+// no chance to react. This is the window in which a human can call UNO late to
+// save themselves, or catch a bot that forgot, before the bots pounce.
+const CATCH_GRACE_MS = 2500
 
 const app = express()
 const server = http.createServer(app)
@@ -31,8 +35,9 @@ app.get('/healthz', (req, res) => {
 
 /* ---- rooms ------------------------------------------------------------- */
 
-const rooms = new Map()      // roomCode -> game
-const botTimers = new Map()  // roomCode -> timeout
+const rooms = new Map()        // roomCode -> game
+const botTimers = new Map()    // roomCode -> timeout
+const catchTimers = new Map()  // roomCode -> timeout
 
 function getRoom(code) {
     if (!rooms.has(code)) rooms.set(code, E.createGame(code))
@@ -41,8 +46,21 @@ function getRoom(code) {
 
 function disposeRoom(code) {
     clearTimeout(botTimers.get(code))
+    clearTimeout(catchTimers.get(code))
     botTimers.delete(code)
+    catchTimers.delete(code)
     rooms.delete(code)
+}
+
+/** Let the bots police a missed UNO, but only after a human could have acted. */
+function scheduleCatch(game) {
+    clearTimeout(catchTimers.get(game.roomCode))
+    if (!game.players.some(p => p.isBot)) return
+    const timer = setTimeout(() => {
+        if (!rooms.has(game.roomCode)) return
+        if (bot.tryCatchUno(game)) broadcast(game)
+    }, CATCH_GRACE_MS)
+    catchTimers.set(game.roomCode, timer)
 }
 
 /** Every player gets their own view — hands are never broadcast wholesale. */
@@ -64,8 +82,8 @@ function scheduleBots(game) {
         if (!rooms.has(game.roomCode)) return
         if (game.status === 'playing' && E.currentPlayer(game) && E.currentPlayer(game).isBot) {
             bot.takeTurn(game, E.currentPlayer(game))
-            bot.tryCatchUno(game)
             broadcast(game)
+            scheduleCatch(game)
             scheduleBots(game)
         }
     }, BOT_THINK_MS)
@@ -127,7 +145,7 @@ io.on('connection', socket => {
     socket.on('playCard', ({ card, color }) => {
         const game = rooms.get(joinedRoom)
         if (!game) return
-        if (apply(socket, game, E.playCard(game, socket.id, card, color))) bot.tryCatchUno(game)
+        if (apply(socket, game, E.playCard(game, socket.id, card, color))) scheduleCatch(game)
     })
 
     socket.on('drawCard', () => {

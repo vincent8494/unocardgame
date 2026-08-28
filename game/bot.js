@@ -5,7 +5,14 @@ const E = require('./engine')
 
 /* A deliberately modest opponent: it plays well enough to be a real game but
  * never sees another hand — it decides from public information plus its own
- * cards, the same input a human has. */
+ * cards, the same input a human has.
+ *
+ * Bots are also made fallible on purpose. A bot that always remembers to call
+ * UNO is not a fair opponent: a human who forgets even 30% of the time drops
+ * from a 50% to a 42% win rate heads-up, and one who never remembers wins 13%.
+ * So bots forget at a human-ish rate too. */
+const UNO_FORGET_RATE = 0.2
+const CATCH_ALERTNESS = 0.5
 
 function chooseColor(hand) {
     const counts = { R: 0, G: 0, B: 0, Y: 0 }
@@ -61,8 +68,9 @@ function takeTurn(game, bot) {
     if (game.status !== 'playing') return false
     if (E.currentPlayer(game).id !== bot.id) return false
 
-    // call UNO before dropping to a single card
-    if (bot.hand.length === 2) E.callUno(game, bot.id)
+    // call UNO before dropping to a single card — but sometimes forget, so a
+    // human has something to catch, exactly as bots catch them
+    if (bot.hand.length === 2 && Math.random() >= UNO_FORGET_RATE) E.callUno(game, bot.id)
 
     const move = chooseMove(game, bot)
     if (move.action === 'play') {
@@ -86,7 +94,7 @@ function takeTurn(game, bot) {
 function tryCatchUno(game) {
     for (const bot of game.players.filter(p => p.isBot)) {
         const target = game.players.find(p => p.id !== bot.id && p.hand.length === 1 && !p.saidUno)
-        if (target && Math.random() < 0.7) {
+        if (target && Math.random() < CATCH_ALERTNESS) {
             E.catchUno(game, bot.id, target.id)
             return true
         }

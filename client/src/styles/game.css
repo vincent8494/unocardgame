@@ -107,11 +107,21 @@
 .catch-btn {
   margin-top: 8px;
   width: 100%;
-  padding: 0.34rem 0.6rem;
-  font-size: 0.74rem;
-  border-color: var(--uno-yellow);
-  color: var(--uno-yellow);
-  background: rgb(240 180 41 / 0.1);
+  padding: 0.4rem 0.6rem;
+  font-size: 0.76rem;
+  font-weight: 700;
+  border-color: transparent;
+  color: #3a2a00;
+  background: linear-gradient(135deg, var(--uno-yellow), #ffd166);
+  /* the window to catch is short — this has to be impossible to miss, or the
+     bots (which poll perfectly) get all the catches */
+  animation: catch-pulse 0.9s ease-in-out infinite;
+}
+.catch-btn:hover { background: linear-gradient(135deg, #ffc846, #ffdd8a); }
+
+@keyframes catch-pulse {
+  0%, 100% { box-shadow: 0 0 0 0 rgb(240 180 41 / 0.6); }
+  50%      { box-shadow: 0 0 0 10px rgb(240 180 41 / 0); }
 }
 
 /* ---- table ---- */

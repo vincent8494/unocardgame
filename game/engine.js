@@ -21,6 +21,7 @@ function createGame(roomCode) {
         discardPile: [],
         currentColor: null,
         pendingWild: null, // id of player who must choose a colour
+        startSeat: 0,      // rotates each round so no seat always leads
         roundWinner: null,
         winner: null,
         targetScore: TARGET_SCORE,
@@ -112,7 +113,10 @@ function startRound(game) {
 
     const card = parseCard(start)
     game.currentColor = card.color
-    game.turnIndex = 0
+    // Leading is worth ~1-2 points of win rate, so the lead rotates by a seat
+    // every round rather than sitting with whoever created the room.
+    game.turnIndex = game.startSeat % game.players.length
+    game.startSeat = (game.startSeat + 1) % game.players.length
     game.status = 'playing'
     addLog(game, `Round started — top card ${start}`)
 
@@ -124,7 +128,7 @@ function startRound(game) {
         advanceTurn(game)
     } else if (card.kind === KIND.REVERSE) {
         game.direction = -1
-        game.turnIndex = game.players.length - 1
+        advanceTurn(game) // steps back one seat from the leader, given direction
     } else if (card.kind === KIND.DRAW2) {
         drawCards(game, currentPlayer(game), 2)
         advanceTurn(game)

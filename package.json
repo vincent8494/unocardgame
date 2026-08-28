@@ -8,11 +8,11 @@
     "dev": "node server.js",
     "client": "npm start --prefix client",
     "install-all": "npm install && cd client && npm install",
-    "build": "cd client && npm install && npm run build",
+    "build": "cd client && npm install --include=dev && npm run build",
     "test:engine": "node test/engine.test.js"
   },
   "engines": {
-    "node": ">=18"
+    "node": "22.x"
   },
   "author": "Margravon",
   "license": "ISC",

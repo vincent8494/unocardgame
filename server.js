@@ -29,6 +29,8 @@ app.get('/healthz', (req, res) => {
         status: 'ok',
         uptime: process.uptime(),
         rooms: rooms.size,
+        activeGames: [...rooms.values()].filter(g => g.status === 'playing').length,
+        players: [...rooms.values()].reduce((n, g) => n + g.players.filter(p => !p.isBot).length, 0),
         timestamp: new Date().toISOString()
     })
 })

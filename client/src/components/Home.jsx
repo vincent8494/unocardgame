@@ -123,7 +123,7 @@ export default function Home({ initialRoom, onEnter }) {
       </div>
 
       <footer className="home-footer">
-        <p className="copyright">&copy; 2026 UNO Card Game</p>
+        <p className="copyright">&copy; 2024 UNO Card Game</p>
         <PoweredBy />
       </footer>
 

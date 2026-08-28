@@ -1,83 +1,128 @@
-# UNO Card Game Online
+# UNO Card Game
 
-[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2Fvincent8494%2Funocardgame)
+Online multiplayer UNO for 2–4 players, with bots to fill empty seats.
+Live at **https://unocardgame-mt9d.onrender.com**
 
-A modern, multiplayer UNO card game built with React and Socket.io. Play UNO online with friends in real-time!
-
-![Game Screenshot](/screenshots/Screenshot-1.png)
-
-## 🚀 Features
-
-- 🎮 Real-time multiplayer gameplay
-- 🎨 Beautiful card animations
-- 🎵 Sound effects and background music
-- 📱 Responsive design for all devices
-- 🎯 Smooth gameplay experience
-- 🌈 Colorful, intuitive interface
-
-## 🎮 How to Play
-
-1. **Start a Game**: Create a new room or join an existing one
-2. **Invite Friends**: Share the room code with friends
-3. **Play UNO**: Follow the on-screen instructions to play your cards
-4. **Win**: Be the first to play all your cards and don't forget to say "UNO!"
-
-## 🛠️ Installation
-
-1. Clone the repository:
-   ```bash
-   git clone https://github.com/vincent8494/unocardgame.git
-   cd unocardgame
-   ```
-
-2. Install dependencies:
-   ```bash
-   cd client
-   npm install
-   cd ..
-   npm install
-   ```
-
-3. Start the development server:
-   ```bash
-   npm run dev
-   ```
-
-4. Open [http://localhost:3000](http://localhost:3000) to play!
-
-## 📦 Tech Stack
-
-- **Frontend**: React, React Router, Styled Components
-- **Backend**: Node.js, Express, Socket.io
-- **Deployment**: Vercel
-
-## 📸 Screenshots
-
-| Game Lobby | Gameplay | Mobile View |
-|------------|----------|-------------|
-| ![Lobby](/screenshots/Screenshot-1.png) | ![Gameplay](/screenshots/Screenshot-2.png) | ![Mobile](/screenshots/Screenshot-3.png) |
-
-## 📜 Game Rules
-
-- Match cards by color or number/symbol
-- Special cards have special effects (Skip, Reverse, Draw 2, Wild, Wild Draw 4)
-- Say "UNO!" when you have one card left
-- First player to play all cards wins the round
-
-## 🤝 Contributing
-
-Contributions are welcome! Please feel free to submit a Pull Request.
-
-## 📄 License
-
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+Built by Margravon. Originally forked from `mizanxali/uno-online`; the game
+engine and client have since been rewritten.
 
 ---
 
-<div align="center">
-  Made with ❤️ by <a href="https://github.com/vincent8494">@marugevincent</a>
-  <br>
-  <a href="https://github.com/vincent8494">
-    <img src="https://img.shields.io/badge/GitHub-100000?style=for-the-badge&logo=github&logoColor=white" alt="GitHub">
-  </a>
-</div>
+## Stack
+
+| | |
+|---|---|
+| Server | Node + Express + Socket.IO 4 |
+| Client | React 18 + Vite 5 |
+| Host | Render (free tier) |
+
+## Running locally
+
+```bash
+npm run install-all     # installs server and client deps
+npm start               # server on :5000
+npm run client          # client on :3000 (proxies sockets to :5000)
+```
+
+Open http://localhost:3000. For a production check:
+
+```bash
+npm run build
+NODE_ENV=production npm start   # serves the built client from :5000
+```
+
+## Tests
+
+```bash
+npm run test:engine
+```
+
+Covers the rule engine and the bots: 300 randomised games across 2–4 players
+asserting the deck always totals 108 cards and no hand ever holds an undefined
+card, 200 bot-vs-bot games asserting the bots always make progress, plus
+regression tests for each bug fixed in the rewrite.
+
+```bash
+node test/integration.test.js
+```
+
+Boots the real server, connects real socket clients and plays a round through
+to a rematch — also asserting no client is ever sent another player's hand.
+
+---
+
+## Architecture
+
+The rules live entirely on the server. Clients send *intent* (`playCard`,
+`drawCard`, `callUno`) and receive a view of the state; they never compute
+rules and are never trusted.
+
+```
+game/cards.js    deck construction, card parsing, legality, scoring
+game/engine.js   the state machine — turns, actions, UNO, scoring, rounds
+game/bot.js      bot decision making
+server.js        socket transport, rooms, bot scheduling
+```
+
+`engine.viewFor(game, playerId)` is the only thing sent to a client. Other
+players appear as a card *count*, never a hand, so a player cannot read
+opponents' cards out of the network tab — which the previous version allowed,
+since it broadcast the whole state to everyone.
+
+## Gameplay
+
+- 2–4 players per room; empty seats can be filled with bots
+- Standard action cards; reverse acts as a skip in a two-player game
+- Call **UNO!** on your way down to one card, or any opponent (bots included)
+  can catch you for a 2-card penalty
+- Rounds score to 500 — number cards face value, actions 20, wilds 50
+- Draw pile reshuffles from the discards when it runs out
+
+---
+
+## Keeping the site awake
+
+Render's free web services sleep after roughly 15 minutes without traffic, and
+the next visitor then waits through a cold start. The app exposes a probe for an
+external pinger:
+
+```
+GET /healthz  →  {"status":"ok","uptime":123.4,"rooms":2,"timestamp":"..."}
+```
+
+### UptimeRobot (recommended)
+
+1. Sign up at <https://uptimerobot.com> (free plan).
+2. **+ New monitor**
+   - Monitor type: **HTTP(s)**
+   - Friendly name: `UNO card game`
+   - URL: `https://unocardgame-mt9d.onrender.com/healthz`
+   - Monitoring interval: **5 minutes**
+3. Create the monitor. You also get email alerts when the site is genuinely down.
+
+### cron-job.org (alternative)
+
+1. Sign up at <https://cron-job.org>.
+2. **Create cronjob** → URL `https://unocardgame-mt9d.onrender.com/healthz`
+3. Schedule: every 10 minutes. Under *Advanced*, raise the request timeout to
+   ~60s so a cold start is not recorded as a failure.
+
+### Before you rely on this
+
+Keeping the service awake around the clock consumes roughly 730 instance-hours
+a month, against a free allowance of 750 hours **shared across the account**.
+That fits for this one service and essentially nothing else — a second always-on
+free service will exhaust the allowance and both will be suspended for the rest
+of the month. Check the current limits and your usage on the Render dashboard
+before enabling the monitor, since these numbers do change.
+
+If the cold start is acceptable, not pinging at all is the cheaper option.
+
+---
+
+## Deployment
+
+`render.yaml` describes the service. Render runs `npm install && npm run build`
+(which builds the client into `client/build`) and starts it with `npm start`;
+`NODE_ENV=production` makes the server serve that build. `/healthz` is set as
+the health check path.

@@ -1,32 +1,27 @@
 {
-  "name": "uno-online",
+  "name": "uno-card-game",
   "version": "1.0.0",
-  "description": "Online multiplayer card game",
+  "description": "Online multiplayer UNO - server-authoritative engine, bots, 2-4 players",
   "main": "server.js",
   "scripts": {
-    "start": "node server",
+    "start": "node server.js",
+    "dev": "node server.js",
     "client": "npm start --prefix client",
     "install-all": "npm install && cd client && npm install",
     "build": "cd client && npm install && npm run build",
-    "heroku-postbuild": "npm run build"
+    "test:engine": "node test/engine.test.js"
   },
   "engines": {
-    "node": "18.x",
-    "npm": ">=6.0.0"
+    "node": ">=18"
   },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/mizanxali/uno-online.git"
-  },
-  "author": "Mizan Ali",
+  "author": "Margravon",
   "license": "ISC",
-  "bugs": {
-    "url": "https://github.com/mizanxali/uno-online/issues"
-  },
-  "homepage": "https://github.com/mizanxali/uno-online#readme",
   "dependencies": {
     "cors": "^2.8.5",
-    "express": "^4.17.1",
-    "socket.io": "^3.1.1"
+    "express": "^4.21.2",
+    "socket.io": "^4.8.1"
+  },
+  "devDependencies": {
+    "socket.io-client": "^4.8.1"
   }
 }

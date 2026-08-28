@@ -1,0 +1,15 @@
+# Render blueprint. Keeps the deploy reproducible instead of living only in the
+# dashboard. Health check path doubles as the target for the external pinger.
+services:
+  - type: web
+    name: unocardgame
+    runtime: node
+    plan: free
+    buildCommand: npm install && npm run build
+    startCommand: npm start
+    healthCheckPath: /healthz
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: NODE_VERSION
+        value: "20"

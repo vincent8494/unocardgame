@@ -1,0 +1,44 @@
+/* ---- Margravon build credit ----------------------------------------------
+   House style: italic, small, `color: inherit` at rest so the wordmark blends
+   into whatever surface it lands on. The Margravon blue appears only when the
+   word itself is hovered, as the colour and the glow together.
+
+   Every surface this credit sits on in this app is dark, so the dark-ground
+   hover pair is used throughout rather than per-theme tokens.
+--------------------------------------------------------------------------- */
+:root {
+  --margravon-hover: #4da3ff;
+  --margravon-glow: rgb(77 163 255 / 0.85);
+}
+
+.powered-by {
+  margin: 6px 0 0;
+  font-size: 0.72rem;
+  font-style: italic;
+  letter-spacing: 0.02em;
+  opacity: 0.9;
+}
+
+.margravon {
+  display: inline-block;
+  /* scale from the left edge so the enlarged word grows rightward instead of
+     expanding back over the "by" beside it */
+  transform-origin: left center;
+  padding: 0 0.08em;
+  font-weight: 600;
+  font-style: italic;
+  color: inherit; /* at rest it matches the surrounding text */
+  transition: transform 0.25s ease, text-shadow 0.25s ease, color 0.25s ease;
+}
+
+/* the hover target is the word itself — hovering "Powered by" does nothing */
+.margravon:hover {
+  transform: scale(1.14);
+  color: var(--margravon-hover);
+  text-shadow: 0 0 8px var(--margravon-glow), 0 0 20px var(--margravon-glow);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .margravon { transition: none; }
+  .margravon:hover { transform: none; }
+}
